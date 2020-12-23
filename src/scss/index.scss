@@ -1,0 +1,81 @@
+
+$primary-color:#00b894;
+$secondary-color:#55efc4;
+$primary-font: 'Noto Serif', serif;
+
+
+.login{
+  h1{
+   text-align: center;
+    padding-bottom:10px;
+  }
+  button{
+    background-color: $primary-color;
+    border: none;
+    outline:none;
+    margin:10px 0;
+    width:100%;
+  }
+  button:hover{
+    opacity: 0.6;
+  }
+  font-family: $primary-font;
+  width:30%;
+  margin:auto;
+  margin-top:100px;
+  padding:30px;
+  background-color: $secondary-color;
+}
+
+.dashboard{
+  .table{
+    margin:50px auto;
+  }
+}
+
+.edit-form{
+  padding:30px;
+  width:50%;
+  h2{
+    text-align: center;
+  }
+  form{
+    margin:50px auto;
+    .form-group{
+      margin-bottom:20px;
+    }
+    button{
+      background-color: $primary-color;
+    }
+  }
+}
+
+.container-top{
+  margin:40px auto;
+  display: flex;
+  justify-content: space-between;
+  .map{
+    height:400px;
+    width:70%;
+  }
+  .add-form {
+    margin-left:20px;
+    justify-content:end;
+    width:30%;
+    .form-group{
+      margin-bottom: 10px;
+    }
+    button{
+      background-color:$primary-color;
+      width:100px;
+      height:25px;
+    }
+    button:hover{
+     opacity:0.7;
+      }
+  }
+}
+
+
+
+
