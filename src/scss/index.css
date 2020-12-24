@@ -11,6 +11,7 @@
 .login h1 {
   text-align: center;
   padding-bottom: 10px;
+  font-family: "Bungee Outline", cursive;
 }
 
 .login button {
@@ -19,13 +20,21 @@
   outline: none;
   margin: 10px 0;
   width: 100%;
+  margin-bottom: 40px;
 }
 
 .login button:hover {
   opacity: 0.6;
 }
 
+.dashboard button:hover {
+  opacity: 0.5;
+}
+
 .dashboard .container-bottom {
+  border-width: 15px;
+  border-color: red;
+  background-color: #eae7dc;
   margin: 50px auto;
 }
 
@@ -36,7 +45,11 @@
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  margin: 20px 0;
+  padding: 20px 0;
+}
+
+.dashboard .container-bottom table tbody tr td i:hover {
+  opacity: 0.5;
 }
 
 .edit-form {
@@ -95,15 +108,5 @@
 
 .container-top .add-form button:hover {
   opacity: 0.7;
-}
-
-.container-bottom {
-  border-width: 15px;
-  border-color: red;
-  background-color: #eae7dc;
-}
-
-.container-bottom .filter {
-  -top: 20px;
 }
 /*# sourceMappingURL=index.css.map */

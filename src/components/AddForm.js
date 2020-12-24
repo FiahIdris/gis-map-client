@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react"
 import MyMap from "./MyMap"
 import axios from "axios"
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchDataServer, setErrors } from "../store/actions"
+import { fetchDataServer, setErrors, showZoom } from "../store/actions"
 import { useHistory } from 'react-router-dom'
-const port = "http://localhost:3000"
+const port = "https://gismap-server.herokuapp.com"
 
 
 
@@ -29,6 +29,7 @@ function AddForm() {
     dispatch(fetchDataServer())
     setLatitude(dataAdd.latitude)
     setLongitude(dataAdd.longitude)
+
   }, [ dataAdd.latitude, dataAdd.longitude, dispatch ])
 
 
@@ -46,13 +47,12 @@ function AddForm() {
         }
       })
         .then(res => {
-          // dispatch(addNewData(data))
           dispatch(fetchDataServer())
+          dispatch(showZoom(false))
           history.push("/dashboard")
 
         })
         .catch(err => {
-          // console.log(err)
           dispatch(setErrors(err.response.data.message))
           setError(err.response.data.message)
 
@@ -63,6 +63,7 @@ function AddForm() {
 
 
   function handleCancel() {
+    dispatch(showZoom(false))
     history.push("/dashboard")
   }
 

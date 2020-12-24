@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { useHistory } from "react-router-dom"
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
 import { saveAction } from '../store/actions'
-import { fetchDataServer, displayForm, saveDataEdit, setErrors } from '../store/actions'
-const port = "http://localhost:3000"
+import { fetchDataServer, saveDataEdit, setErrors, showZoom } from '../store/actions'
+import { useHistory } from 'react-router-dom'
+const port = "https://gismap-server.herokuapp.com"
 
 function EditForm() {
   const { dataEdit, errors } = useSelector(state => state)
 
   const dispatch = useDispatch()
-
+  const history = useHistory()
 
   const [ label, setLabel ] = useState(dataEdit.name)
   const [ city, setCity ] = useState(dataEdit.city)
@@ -18,7 +18,7 @@ function EditForm() {
   const [ latitude, setLatitude ] = useState(dataEdit.latitude)
   const [ longitude, setLongitude ] = useState(dataEdit.longitude)
   const [ show, setShow ] = useState()
-  const [ error, setError ] = useState()
+  // const [ error, setError ] = useState()
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -38,6 +38,7 @@ function EditForm() {
       })
         .then(res => {
           dispatch(fetchDataServer())
+          dispatch(showZoom(false))
           setShow("none")
           dispatch(saveAction(null))
           dispatch(saveDataEdit({
@@ -47,17 +48,20 @@ function EditForm() {
             latitude: -0.789275,
             longitude: 113.921327
           }))
+          history.push("/dashboard")
+
         })
         .catch(err => {
           // console.log(err)
           dispatch(setErrors(err.response.data.message))
-          setError(err.response.data.message)
+          // setError(err.response.data.message)
         })
     }
   }
 
 
   function handleCancel() {
+    dispatch(showZoom(false))
     dispatch(saveAction(""))
   }
 

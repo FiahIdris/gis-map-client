@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import L, { map } from 'leaflet'
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet"
+import React from 'react';
+import L from 'leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, MapConsumer } from "react-leaflet"
 import { useDispatch, useSelector } from 'react-redux';
 import { saveDataAdd } from '../store/actions';
 
@@ -14,6 +14,7 @@ const myIcon = L.icon({
 function MyComponent() {
 
   const dispatch = useDispatch()
+
   const map = useMapEvents({
     click: (location) => {
       const points = location.latlng
@@ -36,46 +37,67 @@ function MyComponent() {
       }))
     },
   })
+
   return null
 }
 
-function MyMap() {
+function MyMap({ isShow, showData }) {
   const { allData, whatAction } = useSelector(state => state)
 
 
   const centerPosition = [ -0.789275, 113.921327 ]
 
-
+  let showLtdlng;
+  if (isShow) {
+    showLtdlng = [ showData.latitude, showData.longitude ]
+  }
 
 
   return (
-    <MapContainer style={ { width: whatAction !== "edit" && "100%" } } className="map" center={ centerPosition } zoom={ 5 }
-      scrollWheelZoom={ true }
-    >
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+    <>
+      <MapContainer style={ { width: whatAction !== "edit" && "100%" } } className="map" center={ centerPosition } zoom={ 5 }
+        scrollWheelZoom={ true }
+      >
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
 
-      {
-        allData && allData.map((point) => (
-          <Marker
-            key={ point.id }
-            position={ [ point.latitude, point.longitude ] }
-            icon={ myIcon }
-          >
-            <Popup>
-              { point.city }
-            </Popup>
-          </Marker>
-        ))
-      }
+        {
+          allData && allData.map((point) => (
+            <Marker
+              key={ point.id }
+              position={ [ point.latitude, point.longitude ] }
+              icon={ myIcon }
+            >
+              <Popup>
+                { point.city }
+              </Popup>
+            </Marker>
+          ))
+        }
+        {
+          isShow ? <MapConsumer>
+            { (map) => {
+              map.flyTo(showLtdlng, 9)
+              return null
+            } }
+          </MapConsumer> :
+            <MapConsumer>
+              { (map) => {
+                map.flyTo(centerPosition, 5)
+                return null
+              } }
+            </MapConsumer>
+        }
 
-      <MyComponent />
+        <MyComponent />
 
 
-    </MapContainer>
+      </MapContainer>
+    </>
   )
 }
+
 
 export default MyMap;

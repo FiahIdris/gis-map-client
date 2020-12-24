@@ -2,6 +2,7 @@
 $primary-color:#00b894;
 $secondary-color:#eae7dc;
 $primary-font: 'Noto Serif', serif;
+$secondary-font:'Bungee Outline', cursive;
 
 
 .login{
@@ -9,6 +10,7 @@ $primary-font: 'Noto Serif', serif;
   h1{
    text-align: center;
     padding-bottom:10px;
+    font-family: $secondary-font
   }
   button{
     background-color: $primary-color;
@@ -16,6 +18,7 @@ $primary-font: 'Noto Serif', serif;
     outline:none;
     margin:10px 0;
     width:100%;
+    margin-bottom: 40px;
   }
   button:hover{
     opacity: 0.6;
@@ -29,12 +32,29 @@ $primary-font: 'Noto Serif', serif;
 }
 
 .dashboard{
+  button:hover{
+    opacity:0.5;
+  }
   .container-bottom{
+    border-width: 15px;
+    border-color: red;
+    background-color:#eae7dc;
     margin:50px auto;
     .filter{
       display: flex;
       justify-content: space-between;
-      margin:20px 0;
+      padding:20px 0;
+    }
+    table{
+      tbody{
+        tr{
+          td{
+            i:hover{
+              opacity:0.5;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -80,17 +100,9 @@ $primary-font: 'Noto Serif', serif;
      opacity:0.7;
       }
   }
- 
 }
 
-.container-bottom{
-  border-width: 15px;
-  border-color: red;
-  background-color:#eae7dc;
-  .filter{
-    -top:20px;
-  }
-}
+
 
 
 

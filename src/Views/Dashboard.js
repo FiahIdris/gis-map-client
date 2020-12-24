@@ -4,14 +4,12 @@ import axios from "axios"
 import { Link, useHistory } from 'react-router-dom'
 import EditForm from '../components/EditForm'
 import MyMap from "../components/MyMap"
-// import searchItem from "../components/SearchFunction"
-import { fetchDataServer, saveDataEdit, saveAction, fetchData, setErrors } from '../store/actions'
-const port = "http://localhost:3000"
+import { fetchDataServer, saveDataEdit, saveAction, fetchData, setErrors, showZoom, addZoomData } from '../store/actions'
+const port = "https://gismap-server.herokuapp.com"
 
 function Dashboard() {
   const history = useHistory()
-  // const {dataEdit} = useSelector(state => state.dataEdit)
-  const { allData, whatAction } = useSelector(state => state)
+  const { allData, whatAction, isShowZoom, zoomData } = useSelector(state => state)
 
   const [ selectedValue, setSelectedValue ] = useState("Filter")
   const dispatch = useDispatch()
@@ -19,17 +17,14 @@ function Dashboard() {
   const [ search, setSearch ] = useState()
   const [ notFound, setNotFound ] = useState()
   const [ dataFilter, setDataFilter ] = useState([])
-  const [ isFilter, setIsFilter ] = useState(false)
-
+  const [ isSearch, setIsSearch ] = useState(false)
 
   useEffect(() => {
     dispatch(fetchDataServer())
-    // setData(allData)
     if (!search) {
       setNotFound(false)
     }
-  }, [ dispatch, search ])
-
+  }, [ search, dispatch ])
   function handleDelete(dataId) {
     axios.delete(`${ port }/locations/${ dataId }`, {
       headers: {
@@ -38,13 +33,9 @@ function Dashboard() {
     })
       .then(res => {
         dispatch(fetchDataServer())
-        // setData(allData)
 
       })
       .catch(err => {
-        // console.log(err.response)
-
-        // setError(err.response.data.message)
       })
   }
 
@@ -64,29 +55,33 @@ function Dashboard() {
   function handleEdit(data) {
     dispatch(saveDataEdit(data))
     dispatch(saveAction("edit"))
+    dispatch(addZoomData(data))
+    dispatch(showZoom(true))
     dispatch(setErrors(null))
   }
 
   function handleSearch(e) {
     e.preventDefault()
+    setIsSearch(true)
 
-    setIsFilter(true)
-
-    setNotFound(false)
-
-    // dispatch(fetchDataServer())
     let result = allData.filter(item => item.name.toUpperCase() === search.toUpperCase());
     if (result.length > 1 || result.length === 1) {
-      // console.log(search, search.toUpperCase())
       setDataFilter(result)
-
+      setNotFound(false)
     } else {
+      setNotFound(true)
       setSearch("")
       dispatch(fetchDataServer())
-      setNotFound(true)
-      setIsFilter(false)
+      setIsSearch(false)
     }
 
+  }
+
+  function handleShow(data) {
+    // console.log(data)
+    dispatch(addZoomData(data))
+    dispatch(showZoom(true))
+    // console.log("rendering on dash", isShow)
   }
 
   function logOut() {
@@ -107,6 +102,8 @@ function Dashboard() {
       <div className="container container-top">
         <MyMap
           dataPoints={ allData }
+          showData={ zoomData }
+          isShow={ isShowZoom }
         />
         {
           whatAction === "edit" && <EditForm />
@@ -128,7 +125,7 @@ function Dashboard() {
         </div>
 
         {
-          notFound && <p>...Tidak ditemukan...</p>
+          notFound && <p style={ { color: "blue" } }>...Tidak ditemukan...</p>
         }
 
         <table className="table table-hover">
@@ -143,7 +140,7 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            { isFilter && dataFilter &&
+            { isSearch && dataFilter &&
               dataFilter.map((location) => (
                 <tr
                   key={ location.id }
@@ -160,12 +157,15 @@ function Dashboard() {
                     }
 
 
-                    <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
+                    <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } />
+
+                    <i className="fa fa-eye fa-2x" aria-hidden="true" onClick={ () => handleShow(location) } style={ { marginLeft: "10px" } } />
+                  </td>
                 </tr>
               ))
             }
             {
-              !isFilter && allData &&
+              !isSearch && allData &&
               allData.map((location) => (
                 <tr
                   key={ location.id }
@@ -182,7 +182,11 @@ function Dashboard() {
                     }
 
 
-                    <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
+                    <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } />
+
+                    <i className="fa fa-eye fa-2x" aria-hidden="true" onClick={ () => handleShow(location) } style={ { marginLeft: "10px" } } />
+
+                  </td>
                 </tr>
               ))
             }

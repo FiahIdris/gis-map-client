@@ -1,5 +1,5 @@
 const initialState = {
-  newData: {
+  zoomData: {
     name: "",
     city: "",
     province: "",
@@ -23,14 +23,15 @@ const initialState = {
   },
   displayForms: "",
   whatAction: null,
-  errors: null
+  errors: null,
+  isShowZoom: false,
 }
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case "ADD_NEW_DATA":
+    case "ADD_ZOOM_DATA":
       return {
-        ...state, newData: action.payload
+        ...state, zoomData: action.payload
       }
     case "FETCH_DATA":
       return {
@@ -55,6 +56,10 @@ function reducer(state = initialState, action) {
     case "SET_ERRORS":
       return {
         ...state, errors: action.payload
+      }
+    case "SHOW_ZOOM":
+      return {
+        ...state, isShowZoom: action.payload
       }
 
     default:

@@ -1,9 +1,10 @@
-import { ADD_NEW_DATA, FETCH_DATA, SAVE_DATA_EDIT, SAVE_DATA_ADD, SAVE_DISPLAY_FORM, SAVE_ACTION, SET_ERRORS } from "./type"
+import { ADD_ZOOM_DATA, FETCH_DATA, SAVE_DATA_EDIT, SAVE_DATA_ADD, SAVE_DISPLAY_FORM, SAVE_ACTION, SET_ERRORS, SHOW_ZOOM } from "./type"
 import axios from "axios"
-const port = "http://localhost:3000"
-export const addNewData = function (data) {
+const port = "https://gismap-server.herokuapp.com"
+
+export const addZoomData = function (data) {
   return {
-    type: ADD_NEW_DATA, payload: data
+    type: ADD_ZOOM_DATA, payload: data
   }
 }
 
@@ -43,24 +44,11 @@ export const saveAction = function (data) {
   }
 }
 
-// export const handleError = function (err) {
-//   return {
-//     type: HANDLE_ERROR, payload: err
-//   }
-// }
-
-// export const isLogin = function (data) {
-//   return {
-//     type: IS_LOGIN, payload: data
-//   }
-// }
-
-// export const adminToken = function (data) {
-//   return {
-//     type: ADMIN_TOKEN, payload: data
-//   }
-
-// }
+export const showZoom = function (data) {
+  return {
+    type: SHOW_ZOOM, payload: data
+  }
+}
 
 export const fetchDataServer = function () {
   return async function (dispatch) {
@@ -70,7 +58,7 @@ export const fetchDataServer = function () {
           access_token: localStorage.getItem("access_token")
         }
       })
-      console.log(data, "====")
+
 
       await dispatch(fetchData(data.locations))
     } catch (err) {

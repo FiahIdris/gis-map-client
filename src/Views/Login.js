@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import axios from "axios"
 import { useDispatch } from 'react-redux'
 import { fetchDataServer } from "../store/actions"
-const port = "http://localhost:3000"
+const port = "https://gismap-server.herokuapp.com"
 
 function Login() {
   const history = useHistory()
@@ -32,11 +32,11 @@ function Login() {
         })
         .catch(err => {
           setIsError(true)
-          console.log(err)
+          // console.log(err)
           if (err.response.data.message) {
 
             setError(err.response.data.message)
-            console.log(err.response.data.message)
+            // console.log(err.response.data.message)
           }
 
         })
