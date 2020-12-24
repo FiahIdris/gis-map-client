@@ -70,6 +70,7 @@ export const fetchDataServer = function () {
           access_token: localStorage.getItem("access_token")
         }
       })
+      console.log(data, "====")
 
       await dispatch(fetchData(data.locations))
     } catch (err) {

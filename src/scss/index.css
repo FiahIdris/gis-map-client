@@ -1,10 +1,11 @@
 .login {
+  border-radius: 15px;
   font-family: "Noto Serif", serif;
   width: 30%;
   margin: auto;
   margin-top: 100px;
   padding: 30px;
-  background-color: #55efc4;
+  background-color: #eae7dc;
 }
 
 .login h1 {
@@ -94,5 +95,15 @@
 
 .container-top .add-form button:hover {
   opacity: 0.7;
+}
+
+.container-bottom {
+  border-width: 15px;
+  border-color: red;
+  background-color: #eae7dc;
+}
+
+.container-bottom .filter {
+  -top: 20px;
 }
 /*# sourceMappingURL=index.css.map */

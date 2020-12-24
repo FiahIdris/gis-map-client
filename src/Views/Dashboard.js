@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
-import { useHistory, Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import EditForm from '../components/EditForm'
 import MyMap from "../components/MyMap"
-import searchItem from "../components/SearchFunction"
-import { fetchDataServer, saveDataEdit, displayForm, saveAction, fetchData, setErrors } from '../store/actions'
+// import searchItem from "../components/SearchFunction"
+import { fetchDataServer, saveDataEdit, saveAction, fetchData, setErrors } from '../store/actions'
 const port = "http://localhost:3000"
 
-
-
-
 function Dashboard() {
-  const dataEdit = useSelector(state => state.dataEdit)
-  const { newData, allData, whatAction } = useSelector(state => state)
+  const history = useHistory()
+  // const {dataEdit} = useSelector(state => state.dataEdit)
+  const { allData, whatAction } = useSelector(state => state)
 
   const [ selectedValue, setSelectedValue ] = useState("Filter")
   const dispatch = useDispatch()
-  const [ error, setError ] = useState("")
-  const [ isError, setIsError ] = useState(false)
+
   const [ search, setSearch ] = useState()
   const [ notFound, setNotFound ] = useState()
-  const [ data, setData ] = useState(allData)
+  const [ dataFilter, setDataFilter ] = useState([])
+  const [ isFilter, setIsFilter ] = useState(false)
 
-  console.log(allData)
 
   useEffect(() => {
     dispatch(fetchDataServer())
-    setData(allData)
-  }, [])
+    // setData(allData)
+    if (!search) {
+      setNotFound(false)
+    }
+  }, [ dispatch, search ])
 
   function handleDelete(dataId) {
     axios.delete(`${ port }/locations/${ dataId }`, {
@@ -38,11 +38,12 @@ function Dashboard() {
     })
       .then(res => {
         dispatch(fetchDataServer())
+        // setData(allData)
 
       })
       .catch(err => {
         // console.log(err.response)
-        setIsError(true)
+
         // setError(err.response.data.message)
       })
   }
@@ -68,27 +69,40 @@ function Dashboard() {
 
   function handleSearch(e) {
     e.preventDefault()
+
+    setIsFilter(true)
+
+    setNotFound(false)
+
     // dispatch(fetchDataServer())
-    let result = data.filter(item => item.name.toUpperCase() === search.toUpperCase());
+    let result = allData.filter(item => item.name.toUpperCase() === search.toUpperCase());
     if (result.length > 1 || result.length === 1) {
       // console.log(search, search.toUpperCase())
-      setData(result)
+      setDataFilter(result)
 
     } else {
       setSearch("")
       dispatch(fetchDataServer())
       setNotFound(true)
+      setIsFilter(false)
     }
 
+  }
+
+  function logOut() {
+    localStorage.clear()
+    history.push("/login")
   }
 
   return (
     <div className="container-fluid dashboard">
       {
         whatAction !== "edit" && <Link to="/add">
-          <button>Add Location</button>
+          <button style={ { margin: "20px 60px" } }>Add Location</button>
         </Link>
       }
+
+      <button style={ { marginTop: "20px", marginLeft: "900px" } } onClick={ logOut }>Log Out</button>
 
       <div className="container container-top">
         <MyMap
@@ -129,46 +143,48 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody>
+            { isFilter && dataFilter &&
+              dataFilter.map((location) => (
+                <tr
+                  key={ location.id }
+                >
+                  <td>{ location.name }</td>
+                  <td>{ location.city }</td>
+                  <td>{ location.province }</td>
+                  <td>{ location.latitude }</td>
+                  <td>{ location.longitude }</td>
+                  <td>
+
+                    {
+                      whatAction !== "edit" && <i style={ { marginRight: "10px" } } className="fa fa-pencil fa-2x" aria-hidden="true" onClick={ () => handleEdit(location) } />
+                    }
+
+
+                    <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
+                </tr>
+              ))
+            }
             {
-              data ?
-                data.map((location) => (
-                  <tr
-                    key={ location.id }
-                  >
-                    <td>{ location.name }</td>
-                    <td>{ location.city }</td>
-                    <td>{ location.province }</td>
-                    <td>{ location.latitude }</td>
-                    <td>{ location.longitude }</td>
-                    <td>
+              !isFilter && allData &&
+              allData.map((location) => (
+                <tr
+                  key={ location.id }
+                >
+                  <td>{ location.name }</td>
+                  <td>{ location.city }</td>
+                  <td>{ location.province }</td>
+                  <td>{ location.latitude }</td>
+                  <td>{ location.longitude }</td>
+                  <td>
 
-                      {
-                        whatAction !== "edit" && <i style={ { marginRight: "10px" } } className="fa fa-pencil fa-2x" aria-hidden="true" onClick={ () => handleEdit(location) } />
-                      }
-
-
-                      <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
-                  </tr>
-                )) :
-                allData.map((location) => (
-                  <tr
-                    key={ location.id }
-                  >
-                    <td>{ location.name }</td>
-                    <td>{ location.city }</td>
-                    <td>{ location.province }</td>
-                    <td>{ location.latitude }</td>
-                    <td>{ location.longitude }</td>
-                    <td>
-
-                      {
-                        whatAction !== "edit" && <i style={ { marginRight: "10px" } } className="fa fa-pencil fa-2x" aria-hidden="true" onClick={ () => handleEdit(location) } />
-                      }
+                    {
+                      whatAction !== "edit" && <i style={ { marginRight: "10px" } } className="fa fa-pencil fa-2x" aria-hidden="true" onClick={ () => handleEdit(location) } />
+                    }
 
 
-                      <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
-                  </tr>
-                ))
+                    <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
+                </tr>
+              ))
             }
           </tbody>
         </table>

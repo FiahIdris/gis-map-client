@@ -1,10 +1,11 @@
 
 $primary-color:#00b894;
-$secondary-color:#55efc4;
+$secondary-color:#eae7dc;
 $primary-font: 'Noto Serif', serif;
 
 
 .login{
+  border-radius: 15px;
   h1{
    text-align: center;
     padding-bottom:10px;
@@ -78,6 +79,16 @@ $primary-font: 'Noto Serif', serif;
     button:hover{
      opacity:0.7;
       }
+  }
+ 
+}
+
+.container-bottom{
+  border-width: 15px;
+  border-color: red;
+  background-color:#eae7dc;
+  .filter{
+    -top:20px;
   }
 }
 

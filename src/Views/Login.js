@@ -1,10 +1,13 @@
 import React, { useState } from "react"
 import { useHistory } from 'react-router-dom'
 import axios from "axios"
+import { useDispatch } from 'react-redux'
+import { fetchDataServer } from "../store/actions"
 const port = "http://localhost:3000"
 
 function Login() {
   const history = useHistory()
+  const dispatch = useDispatch()
 
   const [ email, setEmail ] = useState("")
   const [ password, setPassdword ] = useState("")
@@ -24,12 +27,18 @@ function Login() {
         .then(res => {
           const token = res.data.access_token
           localStorage.setItem('access_token', token)
+          dispatch(fetchDataServer())
           history.push("/dashboard")
         })
         .catch(err => {
           setIsError(true)
-          setError(err.response.data.message)
-          console.log(err.response.data.message)
+          console.log(err)
+          if (err.response.data.message) {
+
+            setError(err.response.data.message)
+            console.log(err.response.data.message)
+          }
+
         })
     } else {
       setIsError(true)
