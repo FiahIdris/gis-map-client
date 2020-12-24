@@ -1,3 +1,19 @@
+** GIS-MAP-Client **
+
+Deploy Here:
+
+[Kanban-Server](https://gismap-inovamap.web.app/)
+
+
+**Code:** LOGIN ADMIN <br />
+    ```
+      {
+      "email": "admin@mail.com",
+      "password": "admin"
+      }
+      ```
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
