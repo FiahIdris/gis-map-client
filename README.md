@@ -6,12 +6,11 @@ Deploy Here:
 
 
 ** LOGIN ADMIN **<br /><br />
-    ```json
+ 
       {
       "email": "admin@mail.com",
       "password": "admin"
       }
-    ```json
 
 
 # Getting Started with Create React App
