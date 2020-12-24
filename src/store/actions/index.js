@@ -1,4 +1,4 @@
-import { ADD_NEW_DATA, FETCH_DATA, SAVE_DATA_EDIT, SAVE_DISPLAY_FORM, SAVE_ACTION } from "./type"
+import { ADD_NEW_DATA, FETCH_DATA, SAVE_DATA_EDIT, SAVE_DATA_ADD, SAVE_DISPLAY_FORM, SAVE_ACTION, SET_ERRORS } from "./type"
 import axios from "axios"
 const port = "http://localhost:3000"
 export const addNewData = function (data) {
@@ -13,9 +13,21 @@ export const fetchData = function (data) {
   }
 }
 
+export const setErrors = function (data) {
+  return {
+    type: SET_ERRORS, payload: data
+  }
+}
+
 export const saveDataEdit = function (data) {
   return {
     type: SAVE_DATA_EDIT, payload: data
+  }
+}
+
+export const saveDataAdd = function (data) {
+  return {
+    type: SAVE_DATA_ADD, payload: data
   }
 }
 

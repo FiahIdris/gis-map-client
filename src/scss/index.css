@@ -24,8 +24,18 @@
   opacity: 0.6;
 }
 
-.dashboard .table {
+.dashboard .container-bottom {
   margin: 50px auto;
+}
+
+.dashboard .container-bottom .filter {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin: 20px 0;
 }
 
 .edit-form {
@@ -65,7 +75,7 @@
 }
 
 .container-top .add-form {
-  margin-left: 20px;
+  padding-left: 20px;
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: end;

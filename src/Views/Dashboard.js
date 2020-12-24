@@ -2,27 +2,32 @@ import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
 import { useHistory, Link } from 'react-router-dom'
-import ActionForm from '../components/ActionForm'
+import EditForm from '../components/EditForm'
 import MyMap from "../components/MyMap"
-import { fetchDataServer, saveDataEdit, displayForm, saveAction, fetchData } from '../store/actions'
+import searchItem from "../components/SearchFunction"
+import { fetchDataServer, saveDataEdit, displayForm, saveAction, fetchData, setErrors } from '../store/actions'
 const port = "http://localhost:3000"
 
 
+
+
 function Dashboard() {
-  const [ selectedValue, setSelectedValue ] = useState("Descending")
+  const dataEdit = useSelector(state => state.dataEdit)
+  const { newData, allData, whatAction } = useSelector(state => state)
+
+  const [ selectedValue, setSelectedValue ] = useState("Filter")
   const dispatch = useDispatch()
   const [ error, setError ] = useState("")
   const [ isError, setIsError ] = useState(false)
   const [ search, setSearch ] = useState()
   const [ notFound, setNotFound ] = useState()
+  const [ data, setData ] = useState(allData)
 
-  const { newData, allData, whatAction } = useSelector(state => state)
-
-  // console.log(allData)
+  console.log(allData)
 
   useEffect(() => {
     dispatch(fetchDataServer())
-
+    setData(allData)
   }, [])
 
   function handleDelete(dataId) {
@@ -33,75 +38,41 @@ function Dashboard() {
     })
       .then(res => {
         dispatch(fetchDataServer())
-        // console.log("yess")
-        // history.push("/dashboard")
+
       })
       .catch(err => {
-        console.log(err.response)
+        // console.log(err.response)
         setIsError(true)
         // setError(err.response.data.message)
       })
   }
 
-  function handleChange(e) {
+  function handleFilter(e) {
     e.preventDefault()
-    // console.log(e.target.value)
     setSelectedValue(e.target.value)
+
     if (e.target.value === "Descending") {
-      axios.get(`${ port }/locations/desc`, {
-        headers: {
-          access_token: localStorage.getItem("access_token")
-        }
-      })
-        .then(res => {
-          console.log(res.data.locations, "dscccc")
-          dispatch(fetchData(res.data.locations))
+      const descendingData = allData.sort().reverse()
 
-        })
-        .catch(err => {
-          console.log(err)
-
-          // setError(err.response.data.message)
-
-        })
+      dispatch(fetchData(descendingData))
     } else {
-      axios.get(`${ port }/locations/asc`, {
-        headers: {
-          access_token: localStorage.getItem("access_token")
-        }
-      })
-        .then(res => {
-          console.log(res, "asccccc")
-          dispatch(fetchData(res.data.locations))
-        })
-        .catch(err => {
-          console.log(err)
-          // setError(err.response.data.message)
-
-        })
+      dispatch(fetchDataServer())
     }
   }
 
-
   function handleEdit(data) {
     dispatch(saveDataEdit(data))
-    dispatch(displayForm("block"))
     dispatch(saveAction("edit"))
-  }
-
-  function handleAddClick() {
-    dispatch(displayForm("block"))
-    dispatch(saveAction("add"))
-
+    dispatch(setErrors(null))
   }
 
   function handleSearch(e) {
-
     e.preventDefault()
-    let result = allData.filter(data => data.name === search);
-    if (result.length > 1 || result.lenght === 1) {
-
-      dispatch(fetchData(result))
+    // dispatch(fetchDataServer())
+    let result = data.filter(item => item.name.toUpperCase() === search.toUpperCase());
+    if (result.length > 1 || result.length === 1) {
+      // console.log(search, search.toUpperCase())
+      setData(result)
 
     } else {
       setSearch("")
@@ -109,68 +80,39 @@ function Dashboard() {
       setNotFound(true)
     }
 
-
-
-    // axios.get(`${ port }/locations/${ search }`, {
-    //   headers: {
-    //     access_token: localStorage.getItem("access_token")
-    //   }
-    // })
-    //   .then(res => {
-    //     if (res.status === 200) {
-    //       let result = allData.filter(data => data.name === search);
-    //       dispatch(fetchData(result))
-    //     }
-    //   })
-    //   .catch(err => {
-    //     setNotFound(true)
-    //     console.log(err.response.data.message)
-    //     // setIsError(true)
-    //     setError(err.response.data.message)
-    //   })
-
   }
 
   return (
     <div className="container-fluid dashboard">
+      {
+        whatAction !== "edit" && <Link to="/add">
+          <button>Add Location</button>
+        </Link>
+      }
 
       <div className="container container-top">
+        <MyMap
+          dataPoints={ allData }
+        />
         {
-          allData && <MyMap
-
-            dataPoints={
-              whatAction === "add" ? newData : allData
-            }
-
-            isAdd={
-              whatAction === "add" ? true : false
-            }
-
-          />
+          whatAction === "edit" && <EditForm />
         }
-
-        {
-          whatAction && <ActionForm
-            actionData={ whatAction }
-          />
-        }
-
       </div>
-      <button onClick={ handleAddClick }>Add Location</button>
+      <div className="container container-bottom">
+        <div className="container filter">
+          <select id="filter"
+            value={ selectedValue }
+            onChange={ (e) => handleFilter(e) }>
+            <option value="">Filter </option>
+            <option value="Descending">Descending</option>
+            <option value="Ascending">Ascending</option>
+          </select>
+          <form onSubmit={ handleSearch }>
+            <input type="text" placeholder="Search here" onChange={ (e) => setSearch(e.target.value) } />
+            <button type="submit"><i className="fa fa-search"></i></button>
+          </form>
+        </div>
 
-      <div className="container table">
-
-        <select id="filter"
-          value={ selectedValue }
-          onChange={ (e) => handleChange(e) }>
-          <option value="">Filter</option>
-          <option value="Descending">Descending</option>
-          <option value="Ascending">Ascending</option>
-        </select>
-        <form onSubmit={ handleSearch }>
-          <input type="text" placeholder="..Search by Label.." onChange={ (e) => setSearch(e.target.value) } />
-          <button type="submit">ok</button>
-        </form>
         {
           notFound && <p>...Tidak ditemukan...</p>
         }
@@ -188,23 +130,45 @@ function Dashboard() {
           </thead>
           <tbody>
             {
-              allData &&
-              allData.map((location) => (
-                <tr
-                  key={ location.id }
-                >
-                  <td>{ location.name }</td>
-                  <td>{ location.city }</td>
-                  <td>{ location.province }</td>
-                  <td>{ location.latitude }</td>
-                  <td>{ location.longitude }</td>
-                  <td>
-                    {/* <Link to={ { pathname: "/edit", data: location } } > */ }
-                    <i style={ { marginRight: "10px" } } className="fa fa-pencil fa-2x" aria-hidden="true" onClick={ () => handleEdit(location) } />
-                    {/* </Link> */ }
-                    <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
-                </tr>
-              ))
+              data ?
+                data.map((location) => (
+                  <tr
+                    key={ location.id }
+                  >
+                    <td>{ location.name }</td>
+                    <td>{ location.city }</td>
+                    <td>{ location.province }</td>
+                    <td>{ location.latitude }</td>
+                    <td>{ location.longitude }</td>
+                    <td>
+
+                      {
+                        whatAction !== "edit" && <i style={ { marginRight: "10px" } } className="fa fa-pencil fa-2x" aria-hidden="true" onClick={ () => handleEdit(location) } />
+                      }
+
+
+                      <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
+                  </tr>
+                )) :
+                allData.map((location) => (
+                  <tr
+                    key={ location.id }
+                  >
+                    <td>{ location.name }</td>
+                    <td>{ location.city }</td>
+                    <td>{ location.province }</td>
+                    <td>{ location.latitude }</td>
+                    <td>{ location.longitude }</td>
+                    <td>
+
+                      {
+                        whatAction !== "edit" && <i style={ { marginRight: "10px" } } className="fa fa-pencil fa-2x" aria-hidden="true" onClick={ () => handleEdit(location) } />
+                      }
+
+
+                      <i className="fa fa-trash-o fa-2x" aria-hidden="true" onClick={ () => handleDelete(location.id) } /></td>
+                  </tr>
+                ))
             }
           </tbody>
         </table>

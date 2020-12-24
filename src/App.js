@@ -7,6 +7,7 @@ import {
 } from "react-router-dom"
 import Login from "./Views/Login"
 import Dashboard from "./Views/Dashboard"
+import AddForm from "./components/AddForm"
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
+          <Route path="/add" component={ AddForm } />
           <Route path="/dashboard" component={ Dashboard } />
           <Route path="/" component={ Login } />
         </Switch>

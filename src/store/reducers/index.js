@@ -14,8 +14,16 @@ const initialState = {
     latitude: -0.789275,
     longitude: 113.921327
   },
-  displayForms: "none",
+  dataAdd: {
+    name: "",
+    city: "",
+    province: "",
+    latitude: -0.789275,
+    longitude: 113.921327
+  },
+  displayForms: "",
   whatAction: null,
+  errors: null
 }
 
 function reducer(state = initialState, action) {
@@ -32,6 +40,10 @@ function reducer(state = initialState, action) {
       return {
         ...state, dataEdit: action.payload
       }
+    case "SAVE_DATA_ADD":
+      return {
+        ...state, dataAdd: action.payload
+      }
     case "SAVE_DISPLAY_FORM":
       return {
         ...state, displayForms: action.payload
@@ -40,23 +52,11 @@ function reducer(state = initialState, action) {
       return {
         ...state, whatAction: action.payload
       }
-    // case "HANDLE_ERROR":
-    //   // console.log("====", action.payload)
-    //   return {
-    //     ...state, isError: true, error: action.payload
-    //   }
-    // case "IS_LOGIN":
-    //   return {
-    //     ...state, isLogin: action.payload
-    //   }
-    // case "ADMIN_TOKEN":
-    //   return {
-    //     ...state, adminToken: action.payload
-    //   }
-    // case "EDIT_PRODUCT":
-    //   return {
-    //     ...state, editProduct: action.payload
-    //   }
+    case "SET_ERRORS":
+      return {
+        ...state, errors: action.payload
+      }
+
     default:
       return state;
   }

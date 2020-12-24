@@ -28,8 +28,13 @@ $primary-font: 'Noto Serif', serif;
 }
 
 .dashboard{
-  .table{
+  .container-bottom{
     margin:50px auto;
+    .filter{
+      display: flex;
+      justify-content: space-between;
+      margin:20px 0;
+    }
   }
 }
 
@@ -59,7 +64,7 @@ $primary-font: 'Noto Serif', serif;
     width:70%;
   }
   .add-form {
-    margin-left:20px;
+    padding-left:20px;
     justify-content:end;
     width:30%;
     .form-group{
